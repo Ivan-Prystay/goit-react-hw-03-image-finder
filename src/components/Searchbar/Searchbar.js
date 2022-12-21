@@ -10,20 +10,39 @@ import {
 
 export class Searchbar extends Component {
   state = {
-    images: [],
+    serchQuery: '',
+  };
+
+  handleChange = event => {
+    const { name, value } = event.currentTarget;
+    this.setState({
+      [name]: value,
+    });
+  };
+
+  handleSubmit = event => {
+    event.preventDefault();
+    if (this.state.serchQuery.trim() === '') {
+      alert('Введіть свій запит');
+      return;
+    }
+    this.props.getQuery(this.state.serchQuery);
+    this.setState({ serchQuery: '' });
   };
 
   render() {
     return (
       <SearchbarHeader>
-        <SearchForm>
-          <SearchFormButton type="submit">
+        <SearchForm onSubmit={this.handleSubmit}>
+          <SearchFormButton
+            type="submit"
+            // disabled={!this.state.serchQuery}
+          >
             🔎
             <ButtonLabel>Search</ButtonLabel>
           </SearchFormButton>
-
           <SearchFormInput
-            className="input"
+            name="serchQuery"
             type="text"
             autoComplete="on"
             //!!!!!!!!!!!!!!!!!!!!!!!!
@@ -31,6 +50,8 @@ export class Searchbar extends Component {
             //!!!!!!!!!!!!!!!!!!!!!!!!
             autoFocus
             placeholder="Search images and photos"
+            value={this.state.serchQuery}
+            onChange={this.handleChange}
           />
         </SearchForm>
       </SearchbarHeader>

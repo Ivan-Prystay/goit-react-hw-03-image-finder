@@ -4,11 +4,11 @@ import { Overlay, ModalWindow } from './Modal.styled';
 
 export class Modal extends Component {
   render() {
-    const { largeImageURL, tags } = this.props.item;
+    const { largeImage, tags } = this.props;
     return (
       <Overlay onClick={this.props.onClose}>
         <ModalWindow>
-          <img src={largeImageURL} alt={tags} />
+          <img src={largeImage} alt={tags} />
         </ModalWindow>
       </Overlay>
     );
