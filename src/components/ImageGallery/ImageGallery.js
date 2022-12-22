@@ -1,6 +1,8 @@
 import { Component } from 'react';
+import PropTypes from 'prop-types';
 import axios from 'axios';
-import { API_KEY, params } from '../../servises/api';
+import { API_KEY, params } from 'servises/api';
+import { notify } from 'servises/notify';
 import { ImageGalleryItem } from 'components/ImageGalleryItem/ImageGalleryItem';
 import { Loader } from '../Loader/Loader';
 import { Button } from '../Button/Button';
@@ -23,8 +25,6 @@ export class ImageGallery extends Component {
   };
 
   async componentDidUpdate(prevProps, prevState) {
-    console.log('this.props', this.state.isLoading);
-
     if (prevProps.nameQuery !== this.props.nameQuery) {
       this.setState({
         images: [],
@@ -41,17 +41,26 @@ export class ImageGallery extends Component {
         const {
           data: { hits, totalHits },
         } = await axios.get(urlSearh, { params });
-
+        if (totalHits > 0 && hits.length > 0) {
+          notify(
+            `За вашим запитом всього знайдено ${totalHits} зображень, завантажую ${hits.length} зображень.`
+          );
+        }
+        if (totalHits > 0 && hits.length === 0) {
+          notify(
+            `За вашим запитом знайдено ${totalHits} зображень, під час завантаження щось пішло не так. Повторіть ще раз.`
+          );
+        }
         this.setState(prevState => ({
           images: [...prevState.images, ...hits],
           totalHits: totalHits,
         }));
         if (totalHits === 0) {
-          alert('Ви ввели некоректний запит');
+          notify('За вашим запитом нічого не знайдено, спробуйте знову');
         }
       } catch (error) {
         console.error(error);
-        alert(error.message);
+        notify(error.message);
       } finally {
         this.setState({ isLoading: false });
       }
@@ -59,16 +68,14 @@ export class ImageGallery extends Component {
   }
 
   render() {
-    console.log('this.state: ', this.state);
-
     return (
       <>
-        {this.state.isLoading && <Loader />}
         <Gallery>
           {this.state.images.map(image => (
             <ImageGalleryItem key={image.id} image={image} />
           ))}
         </Gallery>
+        {this.state.isLoading && <Loader />}
         {Boolean(
           (this.state.images.length % 12 === 0) &
             (this.state.totalHits > params.per_page)
@@ -77,3 +84,7 @@ export class ImageGallery extends Component {
     );
   }
 }
+
+ImageGallery.propTypes = {
+  nameQuery: PropTypes.string.isRequired,
+};

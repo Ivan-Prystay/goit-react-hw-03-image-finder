@@ -1,4 +1,7 @@
+import PropTypes from 'prop-types';
+
 import { Component } from 'react';
+import { notify } from 'servises/notify';
 
 import {
   SearchbarHeader,
@@ -23,7 +26,7 @@ export class Searchbar extends Component {
   handleSubmit = event => {
     event.preventDefault();
     if (this.state.serchQuery.trim() === '') {
-      alert('Введіть свій запит');
+      notify('Введіть свій запит');
       return;
     }
     this.props.getQuery(this.state.serchQuery);
@@ -44,10 +47,7 @@ export class Searchbar extends Component {
           <SearchFormInput
             name="serchQuery"
             type="text"
-            autoComplete="on"
-            //!!!!!!!!!!!!!!!!!!!!!!!!
-            //!  autoComplete="off"//!
-            //!!!!!!!!!!!!!!!!!!!!!!!!
+            autoComplete="off"
             autoFocus
             placeholder="Search images and photos"
             value={this.state.serchQuery}
@@ -58,3 +58,7 @@ export class Searchbar extends Component {
     );
   }
 }
+
+Searchbar.propTypes = {
+  getQuery: PropTypes.func.isRequired,
+};

@@ -1,4 +1,6 @@
 import { Component } from 'react';
+import PropTypes from 'prop-types';
+
 import { Modal } from '../Modal/Modal';
 
 import { ImageItem, Image } from './ImageGalleryItem.styled';
@@ -12,10 +14,7 @@ export class ImageGalleryItem extends Component {
     this.setState({ isOpen: true });
   };
 
-  closeModal = event => {
-    if (event.target.nodeName === 'IMG') {
-      return;
-    }
+  closeModal = () => {
     this.setState({ isOpen: false });
   };
 
@@ -35,3 +34,7 @@ export class ImageGalleryItem extends Component {
     );
   }
 }
+
+ImageGalleryItem.propTypes = {
+  image: PropTypes.object.isRequired,
+};

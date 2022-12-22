@@ -1,4 +1,6 @@
 import { Component } from 'react';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
@@ -19,6 +21,7 @@ export class App extends Component {
       <Container>
         <Searchbar getQuery={this.handelSearshForm} />
         <ImageGallery nameQuery={this.state.nameQuery} />
+        <ToastContainer />
       </Container>
     );
   }

@@ -1,9 +1,16 @@
+import { ProgressBar } from 'react-loader-spinner';
+
 export function Loader() {
   return (
-    <h1 style={{ margin: 0 }}>
-      Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ratione, illo
-      rem dolores voluptates minus ab magnam nulla aliquam sit ad enim dicta
-      fugit eaque accusantium quod aut, quidem magni neque.
-    </h1>
+    <ProgressBar
+      role="alert"
+      height="80"
+      width="80"
+      ariaLabel="progress-bar-loading"
+      wrapperStyle={{ margin: 'auto' }}
+      wrapperClass="progress-bar-wrapper"
+      borderColor="#171e47"
+      barColor="#3f51b5"
+    />
   );
 }
