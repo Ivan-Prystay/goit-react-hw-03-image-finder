@@ -11,51 +11,36 @@ import { Gallery } from './ImageGallery.styled';
 export class ImageGallery extends Component {
   state = {
     images: [],
-    totalHits: 0,
-    page: 1,
+    total: 0,
     isLoading: false,
   };
 
-  addPage = () => {
-    this.setState(prevState => {
-      return {
-        page: prevState.page + 1,
-      };
-    });
-  };
+  async componentDidUpdate(prevProps, _) {
+    const { nameQuery, page } = this.props;
 
-  async componentDidUpdate(prevProps, prevState) {
-    if (prevProps.nameQuery !== this.props.nameQuery) {
+    if (prevProps.nameQuery !== nameQuery) {
       this.setState({
         images: [],
       });
     }
-
-    if (
-      prevProps.nameQuery !== this.props.nameQuery ||
-      prevState.page !== this.state.page
-    ) {
+    if (prevProps.nameQuery !== nameQuery || prevProps.page !== page) {
       try {
         this.setState({ isLoading: true });
-        const urlSearh = `?${API_KEY}&q=${this.props.nameQuery}&page=${this.state.page}`;
+        const urlSearh = `?${API_KEY}&q=${nameQuery}&page=${page}`;
         const {
-          data: { hits, totalHits },
+          data: { hits, total },
         } = await axios.get(urlSearh, { params });
-        if (totalHits > 0 && hits.length > 0) {
+        if (total > 0 && hits.length > 0) {
           notify(
-            `За вашим запитом всього знайдено ${totalHits} зображень, завантажую ${hits.length} зображень.`
+            `За вашим запитом всього знайдено ${total} зображень, завантажую ${hits.length} зображень.`
           );
         }
-        if (totalHits > 0 && hits.length === 0) {
-          notify(
-            `За вашим запитом знайдено ${totalHits} зображень, під час завантаження щось пішло не так. Повторіть ще раз.`
-          );
-        }
+
         this.setState(prevState => ({
           images: [...prevState.images, ...hits],
-          totalHits: totalHits,
+          total: total,
         }));
-        if (totalHits === 0) {
+        if (total === 0) {
           notify('За вашим запитом нічого не знайдено, спробуйте знову');
         }
       } catch (error) {
@@ -68,18 +53,19 @@ export class ImageGallery extends Component {
   }
 
   render() {
+    const { images, isLoading, total } = this.state;
+
     return (
       <>
         <Gallery>
-          {this.state.images.map(image => (
+          {images.map(image => (
             <ImageGalleryItem key={image.id} image={image} />
           ))}
         </Gallery>
-        {this.state.isLoading && <Loader />}
+        {isLoading && <Loader />}
         {Boolean(
-          (this.state.images.length % 12 === 0) &
-            (this.state.totalHits > params.per_page)
-        ) && <Button addPage={this.addPage} />}
+          (images.length % params.per_page === 0) & (total > params.per_page)
+        ) && <Button addPage={this.props.addPage} />}
       </>
     );
   }
@@ -87,4 +73,6 @@ export class ImageGallery extends Component {
 
 ImageGallery.propTypes = {
   nameQuery: PropTypes.string.isRequired,
+  page: PropTypes.number.isRequired,
+  addPage: PropTypes.func.isRequired,
 };

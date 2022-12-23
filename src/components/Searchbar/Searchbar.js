@@ -25,12 +25,21 @@ export class Searchbar extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    if (this.state.serchQuery.trim() === '') {
+    const { serchQuery } = this.state;
+    const { nameQuery, getQuery } = this.props;
+
+    if (serchQuery.trim() === '') {
       notify('Введіть свій запит');
-this.setState({ serchQuery: '' });
       return;
     }
-    this.props.getQuery(this.state.serchQuery);
+
+    if (nameQuery.toLowerCase().trim() === serchQuery.toLowerCase().trim()) {
+      notify('У вашому запиті нічого не змінилось');
+      this.setState({ serchQuery: '' });
+      return;
+    }
+
+    getQuery(serchQuery);
     this.setState({ serchQuery: '' });
   };
 
@@ -38,10 +47,7 @@ this.setState({ serchQuery: '' });
     return (
       <SearchbarHeader>
         <SearchForm onSubmit={this.handleSubmit}>
-          <SearchFormButton
-            type="submit"
-            // disabled={!this.state.serchQuery}
-          >
+          <SearchFormButton type="submit">
             🔎
             <ButtonLabel>Search</ButtonLabel>
           </SearchFormButton>
@@ -62,4 +68,5 @@ this.setState({ serchQuery: '' });
 
 Searchbar.propTypes = {
   getQuery: PropTypes.func.isRequired,
+  nameQuery: PropTypes.string.isRequired,
 };
