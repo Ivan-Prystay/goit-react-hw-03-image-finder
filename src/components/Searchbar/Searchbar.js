@@ -27,6 +27,7 @@ export class Searchbar extends Component {
     event.preventDefault();
     if (this.state.serchQuery.trim() === '') {
       notify('Введіть свій запит');
+this.setState({ serchQuery: '' });
       return;
     }
     this.props.getQuery(this.state.serchQuery);
